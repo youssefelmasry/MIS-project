@@ -1,0 +1,8 @@
+VAR $myint,NUMERIC,100
+VAR $myfloat,REAL,12.14
+VAR $mychar,CHAR,’c’
+VAR $mystr,STRING,100,”Hello world MIS!!!”
+MUL $myint,100,20.7,300,$myint1
+OUT $myint,$mychar
+SLEEP 100
+SLEEP $myint
