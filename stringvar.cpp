@@ -25,5 +25,7 @@ Var * StringVar::clone(stringstream & ss){
     return stringvar;
 }
 
+void StringVar::setvalue(string x){strcpy(vstring,x.c_str());}
+
 char* StringVar::getvalue(){return vstring;}
 StringVar::~StringVar(){}
