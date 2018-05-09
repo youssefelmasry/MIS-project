@@ -44,7 +44,7 @@ class ADD: public operation
             string new_var_name=""; // the variable name that will store the numbers ( the first parameter)
             stringstream iss(opline);
             getline(iss,new_var_name,','); // parse the given line to the first comma which is the storing variable
-            getline(iss,newvar,',');
+            // getline(iss,newvar,',');
                  
             pair_array p1 = Pair1(new_var_name);
 
@@ -61,22 +61,22 @@ class ADD: public operation
             }
             else{cout<<"There are no variable with that name "<<new_var_name<<"\n"; return;}
 
-            pair_array p2 = Pair1(newvar);
+            // pair_array p2 = Pair1(newvar);
 
-            if(newvar[0] == '$')
-            {
-                if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
-                    NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
-                    new_var += tmp->getvalue(); // add the value to new_var
-                }
-                else if(getmap.find(p2[1]) != getmap.end()){// to get real value
-                    RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
-                    new_var += tmp->getvalue();
-                }
-                    else{cout<<"There are no variable with that name "<<newvar<<"\n";}
+            // if(newvar[0] == '$')
+            // {
+            //     if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
+            //         NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
+            //         new_var += tmp->getvalue(); // add the value to new_var
+            //     }
+            //     else if(getmap.find(p2[1]) != getmap.end()){// to get real value
+            //         RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
+            //         new_var += tmp->getvalue();
+            //     }
+            //         else{cout<<"There are no variable with that name "<<newvar<<"\n";}
                     
-            }else
-                new_var += stof(newvar);
+            // }else
+            //     new_var += stof(newvar);
             while(getline(iss,str,','))
             {
                 if(str[0] == '$'){
@@ -90,12 +90,13 @@ class ADD: public operation
                         RealVar* tmp = dynamic_cast<RealVar*>(getmap[p3[1]]);
                         new_var += tmp->getvalue();
                     }
-                    else{cout<<"There are no variable with that name "<<var<<"\n";}
-                    var = "";
+                    else{cout<<"There are no variable with that name "<<str<<"\n";}
+                    
                     
                 }
-                new_var += stof(str);
-                str = "";
+                else{
+                    new_var += stof(str);
+                    str = "";}
             }
             if(setv1 != 0) {setv1->setvalue(new_var); setv1 = 0;}
             else if(setv2 !=0 ){setv2 ->setvalue(new_var); setv2 = 0;}
@@ -125,33 +126,25 @@ class SUB: public operation
             getline(iss,second_p,',');
             getline(iss,third_p,',');
              // create an object from struct pair
-            pair_array p1 = Pair1(first_p);
-            if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
-                NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
-                new_var = tmp->getvalue(); // add the value to new_var
-            }
-            else if(getmap.find(p1[1]) != getmap.end()){// to get real value
-                RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
-                new_var = tmp->getvalue();
-            }
-            else{cout<<"There are no variable with that name "<<first_p<<"\n";return;}
 
             pair_array p2 = Pair1(second_p);
+            // save the second value to new_var variable to subtract the third parameter from it
             if(second_p[0] == '$')
             {
                 if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
                     NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
-                    new_var -= tmp->getvalue(); // add the value to new_var
+                    new_var = tmp->getvalue(); // add the value to new_var
                 }
                 else if(getmap.find(p2[1]) != getmap.end()){// to get real value
                     RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
-                    new_var -= tmp->getvalue();
+                    new_var = tmp->getvalue();
                 }
-                else{cout<<"There are no variable with that name !"<<second_p<<"\n";}
+                else{cout<<"There are no variable with that name !"<<second_p<<"\n"; return;}
                     
             }else
-                new_var -= stof(second_p);
+                new_var = stof(second_p);
 
+            // get the value of the third parameter and subtract it from the second one
             pair_array p3 = Pair1(third_p);
             if(third_p[0] == '$')
             {
@@ -163,12 +156,22 @@ class SUB: public operation
                     RealVar* tmp = dynamic_cast<RealVar*>(getmap[p3[1]]);
                     new_var -= tmp->getvalue();
                 }
-                else{cout<<"There are no variable with that name !"<<third_p<<"\n";}
+                else{cout<<"There are no variable with that name !"<<third_p<<"\n";return;}
                     
             }else
-                new_var -= stof(third_p);
-            if(setv1 != 0) {setv1->setvalue(new_var); setv1 = 0;}
-            else if(setv2 !=0 ){setv2 ->setvalue(new_var); setv2 = 0;}
+                new_var -= stof(third_p); 
+
+            // save the result to the first parameter    
+            pair_array p1 = Pair1(first_p);
+            if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
+                NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
+                tmp->setvalue(new_var);
+            }
+            else if(getmap.find(p1[1]) != getmap.end()){// to get real value
+                RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
+                tmp->setvalue(new_var);
+            }
+            else{cout<<"There are no variable with that name "<<first_p<<"\n";return;}
             
             cout<<new_var<<endl;
 
@@ -180,19 +183,18 @@ class MULT: public operation
 {
     public:
         MULT(){}
-        void perform(map <pair<string,string>, Var*>& getmap, string opline)
+         void perform(map <pair<string,string>, Var*>& getmap, string opline)
         {
             cout<<"this is MUL op\n";
             string str = "";
             string var="";
             
             
-            double new_var=0; // a variable to store the multipled of the numbers
+            double new_var=0; // a variable to store the sum of the numbers
             string newvar;
             string new_var_name=""; // the variable name that will store the numbers ( the first parameter)
             stringstream iss(opline);
             getline(iss,new_var_name,','); // parse the given line to the first comma which is the storing variable
-            getline(iss,newvar,',');
                  
             pair_array p1 = Pair1(new_var_name);
 
@@ -209,37 +211,11 @@ class MULT: public operation
             }
             else{cout<<"There are no variable with that name "<<new_var_name<<"\n"; return;}
 
-            pair_array p2 = Pair1(newvar);
-
-            if(newvar[0] == '$')
+            while(getline(iss,str,','))
             {
-                if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
-                    NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
-                    new_var *= tmp->getvalue(); // add the value to new_var
-                }
-                else if(getmap.find(p2[1]) != getmap.end()){// to get real value
-                    RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
-                    new_var *= tmp->getvalue();
-                }
-                    else{cout<<"There are no variable with that name "<<newvar<<"\n";}
+                if(str[0] == '$'){
                     
-            }else
-                new_var *= stof(newvar);
-            for(int i =new_var_name.length()+newvar.length()+2; opline[i] != '\0'; i++)
-            {
-                if(opline[i] != ',')
-                {
-                    str+=opline[i];
-                    continue;
-                }
-                if(opline[i] == '$'){
-                    var += opline[i]; // put the $ sign into the string var
-                    i++; // increament i
-                    while(opline[i] != ',' && opline[i] != '\0'){ // a loop to put the rest of name of the variable into var
-                        var += opline[i];
-                        i++;
-                    }
-                    pair_array p3 = Pair1(var);
+                    pair_array p3 = Pair1(str);
                     if(getmap.find(p3[0]) != getmap.end()){ // to get numeric value
                         NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p3[0]]);
                         new_var *= tmp->getvalue(); // add the value to new_var
@@ -248,12 +224,13 @@ class MULT: public operation
                         RealVar* tmp = dynamic_cast<RealVar*>(getmap[p3[1]]);
                         new_var *= tmp->getvalue();
                     }
-                    else{cout<<"There are no variable with that name "<<var<<"\n";}
-                    var = "";
+                    else{cout<<"There are no variable with that name "<<str<<"\n";}
+                    
                     
                 }
-                new_var *= stof(str);
-                str = "";
+                else{
+                    new_var *= stof(str);
+                    str = "";}
             }
             if(setv1 != 0) {setv1->setvalue(new_var); setv1 = 0;}
             else if(setv2 !=0 ){setv2 ->setvalue(new_var); setv2 = 0;}
@@ -282,51 +259,58 @@ class DIV: public operation
             getline(iss,second_p,',');
             getline(iss,third_p,',');
              // create an object from struct pair
-            pair_array p1 = Pair1(first_p);
-            if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
-                NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
-                new_var = tmp->getvalue(); // add the value to new_var
-            }
-            else if(getmap.find(p1[1]) != getmap.end()){// to get real value
-                RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
-                new_var = tmp->getvalue();
-            }
-            else{cout<<"There are no variable with that name "<<first_p<<"\n";return;}
-
+            
             pair_array p2 = Pair1(second_p);
             if(second_p[0] == '$')
             {
                 if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
                     NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
-                    new_var /= tmp->getvalue(); // add the value to new_var
+                    if(tmp->getvalue() != 0)
+                        new_var = tmp->getvalue(); // add the value to new_var
+                    else{cout<<"Error divisible by zero "<<'\n';return;}
                 }
                 else if(getmap.find(p2[1]) != getmap.end()){// to get real value
                     RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
-                    new_var /= tmp->getvalue();
+                    if(tmp->getvalue() != 0)
+                        new_var = tmp->getvalue(); // add the value to new_var
+                    else{cout<<"Error divisible by zero "<<'\n';return;}
                 }
-                else{cout<<"There are no variable with that name "<<second_p<<"\n";}
+                else{cout<<"There are no variable with that name "<<second_p<<"\n";return;}
                     
             }else
-                new_var /= stof(second_p);
+                new_var = stof(second_p);
 
             pair_array p3 = Pair1(third_p);
             if(third_p[0] == '$')
             {
                 if(getmap.find(p3[0]) != getmap.end()){ // to get numeric value
                     NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p3[0]]);
-                    new_var /= tmp->getvalue(); // add the value to new_var
+                    if(tmp->getvalue() != 0)
+                        new_var /= tmp->getvalue(); // add the value to new_var
+                    else{cout<<"Error divisible by zero "<<'\n';return;} // add the value to new_var
                 }
                 else if(getmap.find(p3[1]) != getmap.end()){// to get real value
                     RealVar* tmp = dynamic_cast<RealVar*>(getmap[p3[1]]);
-                    new_var /= tmp->getvalue();
+                    if(tmp->getvalue() != 0)
+                        new_var /= tmp->getvalue(); // add the value to new_var
+                    else{cout<<"Error divisible by zero "<<'\n';return;}
                 }
-                else{cout<<"There are no variable with that name "<<third_p<<"\n";}
+                else{cout<<"There are no variable with that name "<<third_p<<"\n";return;}
                     
             }else
                 new_var /= stof(third_p);
-            if(setv1 != 0) {setv1->setvalue(new_var); setv1 = 0;}
-            else if(setv2 !=0 ){setv2 ->setvalue(new_var); setv2 = 0;}
-            
+
+            pair_array p1 = Pair1(first_p);
+            if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
+                NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
+                tmp->setvalue(new_var);
+            }
+            else if(getmap.find(p1[1]) != getmap.end()){// to get real value
+                RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
+                tmp->setvalue(new_var);
+            }
+            else{cout<<"There are no variable with that name "<<first_p<<"\n";return;}
+
             cout<<new_var<<endl;
 
         }
@@ -338,35 +322,67 @@ class ASSIGN: public DIV
         ASSIGN(){}
         void perform(map <pair<string,string>, Var*>& getmap, string opline)
         {
-            string var="";
             string newvar="";
-            double new_var=0;
-            long x = 0;
-            //char y = '';
-            string z = "";
+            //double new_var=0;
+
             string new_var_name=""; // the variable name that will store the numbers ( the first parameter)
             stringstream iss(opline);
             getline(iss,new_var_name,','); // parse the given line to the first comma which is the storing variable
             getline(iss,newvar,',');
             cout<<newvar<<endl;
              // create an object from struct pair
-            pair_array p1 = Pair1(newvar);
+            pair_array p1 = Pair1(new_var_name); 
+            
             
             if(newvar[0] == '$')
             {
-                if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
-                    NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
-                    x = tmp->getvalue(); // add the value to new_var
+                pair_array p2 = Pair1(newvar);
+                if((getmap.find(p1[0]) != getmap.end()) && (getmap.find(p2[0]) != getmap.end()) ){ // to check if the two variables are numeric value
+                    NumericVar* tmp1 = dynamic_cast<NumericVar*>(getmap[p1[0]]);
+                    NumericVar* tmp2 = dynamic_cast<NumericVar*>(getmap[p2[0]]);
+                    tmp1->setvalue(tmp2->getvalue()); // Assign the value of second variable to the first one
                 }
-                else if(getmap.find(p1[1]) != getmap.end()){// to get real value
-                    RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
-                    new_var = tmp->getvalue();
-                    tmp->setvalue(x);
+                else if((getmap.find(p1[1]) != getmap.end()) && (getmap.find(p2[1]) != getmap.end()) ){ // to check if the two variables are real value
+                    RealVar* tmp1 = dynamic_cast<RealVar*>(getmap[p1[1]]);
+                    RealVar* tmp2 = dynamic_cast<RealVar*>(getmap[p2[1]]);
+                    tmp1->setvalue(tmp2->getvalue());
                 }
-                    else{cout<<"There are no variable with that name !\n";}
+                else if((getmap.find(p1[2]) != getmap.end()) && (getmap.find(p2[2]) != getmap.end()) ){ // to check if the two variables are string value
+                    StringVar* tmp1 = dynamic_cast<StringVar*>(getmap[p1[2]]);
+                    StringVar* tmp2 = dynamic_cast<StringVar*>(getmap[p2[2]]);
+                    tmp1->setvalue(tmp2->getvalue());
+                }
+                else if((getmap.find(p1[3]) != getmap.end()) && (getmap.find(p2[3]) != getmap.end()) ){ // to check if the two variables are char value
+                    CharVar* tmp1 = dynamic_cast<CharVar*>(getmap[p1[3]]);
+                    CharVar* tmp2 = dynamic_cast<CharVar*>(getmap[p2[3]]);
+                    tmp1->setvalue(tmp2->getvalue());
+                }
+                    else{cout<<"Error cannot find a variable or cannot assign different data type of values\n";}
                     
-            }else
-                new_var = stof(newvar);
+            }
+            else if(newvar[0] == '"'){
+                if((getmap.find(p1[2]) != getmap.end())){ // to check if the two variables are string value
+                    StringVar* tmp1 = dynamic_cast<StringVar*>(getmap[p1[2]]);              
+                    tmp1->setvalue(newvar);
+                }else{cout<<"Cannot find the variable "<<new_var_name<<"\n";}
+            }
+            else if(newvar[0] == '\''){
+                if((getmap.find(p1[3]) != getmap.end())){ // to check if the two variables are string value
+                    CharVar* tmp1 = dynamic_cast<CharVar*>(getmap[p1[3]]);              
+                    tmp1->setvalue(newvar[1]);
+                }else{cout<<"Cannot find the variable "<<new_var_name<<"\n";}
+            }
+            else{
+                 if((getmap.find(p1[0]) != getmap.end()) ){ // to check if the two variables are numeric value
+                    NumericVar* tmp1 = dynamic_cast<NumericVar*>(getmap[p1[0]]);                   
+                    tmp1->setvalue(stol(newvar)); // Assign the value of second variable to the first one
+                }
+                else if((getmap.find(p1[1]) != getmap.end())){ // to check if the two variables are real value
+                    RealVar* tmp1 = dynamic_cast<RealVar*>(getmap[p1[1]]);
+                    tmp1->setvalue(stod(newvar));
+                }
+            }
+                
         }
         ~ASSIGN(){}
 };
@@ -414,10 +430,19 @@ class Sleep: public operation
     {
         if(opline[0] == '$')
         {
-
+            pair_array p2 = Pair1(opline);
+            if(getmap.find(p2[0]) != getmap.end()){ // to get numeric value
+                    NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p2[0]]);
+                    usleep((tmp->getvalue())); // add the value to new_var
+                }
+                else if(getmap.find(p2[1]) != getmap.end()){// to get real value
+                    RealVar* tmp = dynamic_cast<RealVar*>(getmap[p2[1]]);
+                    usleep((tmp->getvalue()));
+                }
+                else{cout<<"There are no variable with that name !"<<opline<<"\n"; return;}
         }
         else
-        usleep(stof(opline)*1000);
+        usleep(stof(opline));
     }
     ~Sleep(){}
 

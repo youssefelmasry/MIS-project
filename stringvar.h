@@ -8,7 +8,7 @@ class StringVar: public Var{
     public:
         StringVar(); // Defualt Constructor
         char* getvalue();
-        void setvalue(char* x){vstring = x;}
+        void setvalue(string x);
         void initialize(stringstream &ss); // A method that initializes the object from a stringstream
         virtual Var* clone(stringstream &ss); // Factory Clone method
         virtual ~StringVar(); // Destructor
