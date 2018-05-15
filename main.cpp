@@ -27,6 +27,7 @@ int main()
     ops["ASSIGN"] = new ASSIGN();
     ops["OUT"] = new OUT();
     ops["SLEEP"] = new Sleep();
+    ops["SET_STR_CHAR"] = new SET_STR_CHAR();
 
     vector <string> lines; // vector to store lines of the mis file
     vector <string> :: iterator i;
@@ -50,7 +51,8 @@ int main()
         string tmp2 = "";
         stringstream is(*i);
         getline(is,tmp,' ');
-        for(int j = tmp.length()+1; j<(*i).length();j++){tmp2 += (*i)[j];} // save the rest of the line to tmp2
+        short int len = (*i).length();
+        for(int j = tmp.length()+1; j<len;j++){tmp2 += (*i)[j];} // save the rest of the line to tmp2
         if(tmp == "VAR"){Save_var(tmp2);}
         else if(tmp == "LABEL")
         {

@@ -329,7 +329,7 @@ class ASSIGN: public DIV
             stringstream iss(opline);
             getline(iss,new_var_name,','); // parse the given line to the first comma which is the storing variable
             getline(iss,newvar,',');
-            cout<<newvar<<endl;
+          //  cout<<newvar<<endl;
              // create an object from struct pair
             pair_array p1 = Pair1(new_var_name); 
             
@@ -349,7 +349,7 @@ class ASSIGN: public DIV
                 }
                 else if((getmap.find(p1[2]) != getmap.end()) && (getmap.find(p2[2]) != getmap.end()) ){ // to check if the two variables are string value
                     StringVar* tmp1 = dynamic_cast<StringVar*>(getmap[p1[2]]);
-                    StringVar* tmp2 = dynamic_cast<StringVar*>(getmap[p2[2]]);
+                    StringVar* tmp2 = dynamic_cast<StringVar*>(getmap[p2[2]]);                    
                     tmp1->setvalue(tmp2->getvalue());
                 }
                 else if((getmap.find(p1[3]) != getmap.end()) && (getmap.find(p2[3]) != getmap.end()) ){ // to check if the two variables are char value
@@ -400,19 +400,19 @@ class OUT: public operation
                       pair_array p1 = Pair1(var);
                     if(getmap.find(p1[0]) != getmap.end()){ // to get numeric value
                         NumericVar* tmp = dynamic_cast<NumericVar*>(getmap[p1[0]]);
-                        cout<<tmp->getvalue()<<endl;// add the value to new_var
+                        cout<<tmp->getvalue()<<"\t";// add the value to new_var
                     }
                     else if(getmap.find(p1[1]) != getmap.end()){// to get real value
                         RealVar* tmp = dynamic_cast<RealVar*>(getmap[p1[1]]);
-                        cout<<tmp->getvalue()<<endl;
+                        cout<<tmp->getvalue()<<"\t";
                     }
                     else if(getmap.find(p1[2]) != getmap.end()){// to get string value
                         StringVar* tmp = dynamic_cast<StringVar*>(getmap[p1[2]]);
-                        cout<<tmp->getvalue()<<endl;
+                        cout<<tmp->getvalue()<<"\t";
                     }
                     else if(getmap.find(p1[3]) != getmap.end()){// to get char value
                         CharVar* tmp = dynamic_cast<CharVar*>(getmap[p1[3]]);
-                        cout<<tmp->getvalue()<<endl;
+                        cout<<tmp->getvalue()<<"\t";
                     }
                     else{cout<<"There are no variable with that name !\n";}
                     var = "";
@@ -446,4 +446,41 @@ class Sleep: public operation
     }
     ~Sleep(){}
 
+};
+class SET_STR_CHAR: public operation
+{
+    public:
+    SET_STR_CHAR(){}
+    void perform(map <pair<string,string>, Var*>& getmap, string opline)
+    {
+        int index = 0;
+        char swap ;
+        
+        string tmpint = "";
+        string tmpchr = "";
+        string varx ="";
+        stringstream iss(opline);
+
+        getline(iss, varx, ',');
+        getline(iss, tmpint, ',');
+        getline(iss, tmpchr, ',');
+        index = stoi(tmpint);
+        swap = tmpchr[1];
+
+        if(varx[0] == '$')
+        {
+            pair_array p2 = Pair1(varx);
+            if(getmap.find(p2[2]) != getmap.end()){// to get string value
+                StringVar* tmp = dynamic_cast<StringVar*>(getmap[p2[2]]);
+                varx = tmp->getvalue();
+                if(index > varx.length())
+                    cout<<"Index error! out of range\n";
+                else{
+                    varx[index] = swap;                
+                    tmp->setvalue(varx);
+                }
+            }
+                else{cout<<"There are no variable with that name !"<<opline<<"\n"; return;}
+        }else{cout<<"Syntax error!\n";}
+    }    
 };

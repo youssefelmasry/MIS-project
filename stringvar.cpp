@@ -10,7 +10,7 @@ void StringVar::initialize(stringstream &ss)
     length = stoi(str); // convert the size of array from string to integer
     getline(ss,str,','); // parse the line to the second comma to get the string
     vstring = new char[length]; // initialize the array dynamacilly with the given size
-    str = str.substr(3,str.size()-6); // remove the double quote from the string
+    str = str.substr(0,str.size()); // remove the double quote from the string
     strcpy(vstring,str.c_str()); // assign the string to the array of char
     // test cases
     // for(int i = 0; i<strlen(vstring); i++){
