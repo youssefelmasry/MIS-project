@@ -1,9 +1,16 @@
 #include <vector>
 #include <string>
 #include "var.h"
+#include <map>
+using namespace std;
+//#include "operations.h"
+
 class Parse{
+    protected:
+        vector <string> instructions;
+
     public:
         Parse();
-        void parsing(string filename, vector <string>& vec);
+        int parsing( vector <string>& vec);
         ~Parse();
 };
